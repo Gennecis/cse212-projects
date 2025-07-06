@@ -9,11 +9,19 @@ public static class Arrays
     public static double[] MultiplesOf(double number, int length)
     {
         // TODO Problem 1 Start
-        // Remember: Using comments in your program, write down your process for solving this problem
-        // step by step before you write the code. The plan should be clear enough that it could
-        // be implemented by another person.
 
-        return []; // replace this return statement with your own
+        // iterate through length and for eact index of length, multiply with number.
+
+        // make an empty list
+        double [] res = new double[length];
+        // iterate through length
+        for (int i = 0; i < length; ++i)
+        {   
+            // multiply number by current index and append the result to 'res'
+            res[i] = number * (i+1);
+        }
+
+        return res;
     }
 
     /// <summary>
@@ -26,8 +34,19 @@ public static class Arrays
     public static void RotateListRight(List<int> data, int amount)
     {
         // TODO Problem 2 Start
-        // Remember: Using comments in your program, write down your process for solving this problem
-        // step by step before you write the code. The plan should be clear enough that it could
-        // be implemented by another person.
+        // Use modulo to handle cases where amount > data.Count
+        amount = amount % data.Count;
+        // Get the last 'amount' elements that need to move to the front
+        List<int> lastpart = data.GetRange(data.Count - amount, amount);
+        // get the first 'amount' elements stays after the rotated list
+        List<int> firstpart = data.GetRange(0, data.Count - amount);
+
+        // clear the current data list
+        data.Clear();
+        
+        // Add the rotated last part to the now-empty data list
+        data.AddRange(lastpart);
+        // then add first part after it 
+        data.AddRange(firstpart);
     }
 }
