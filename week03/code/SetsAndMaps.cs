@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
 
 public static class SetsAndMaps
 {
@@ -21,9 +22,26 @@ public static class SetsAndMaps
     /// <param name="words">An array of 2-character words (lowercase, no duplicates)</param>
     public static string[] FindPairs(string[] words)
     {
-        // TODO Problem 1 - ADD YOUR CODE HERE
-        return [];
+        var wordSet = new HashSet<string>(words);
+        var seen = new HashSet<string>();
+        var res = new List<string>();
+
+        foreach (var word in wordSet) // Only loop through unique words
+        {
+            var charArray = word.ToCharArray();
+            Array.Reverse(charArray); // faster than LINQ
+            var reversed = new string(charArray);
+
+            if (word != reversed && wordSet.Contains(reversed) && !seen.Contains(reversed))
+            {
+                res.Add($"{word} & {reversed}");
+                seen.Add(word);
+            }
+        }
+
+        return res.ToArray();
     }
+
 
     /// <summary>
     /// Read a census file and summarize the degrees (education)
@@ -43,6 +61,22 @@ public static class SetsAndMaps
         {
             var fields = line.Split(",");
             // TODO Problem 2 - ADD YOUR CODE HERE
+
+            // make sure the degree information column exists
+            if (fields.Length >= 4)
+            {
+                // assign the 4th column values to a variable 'degree'
+                var degree = fields[3].Trim();
+                // check if a degree is already in the degrees dictionary - if yes, increment.
+                if (degrees.ContainsKey(degree))
+                {
+                    degrees[degree]++;
+                }
+                else
+                {
+                    degrees[degree] = 1;
+                }
+            }
         }
 
         return degrees;
@@ -66,9 +100,49 @@ public static class SetsAndMaps
     /// </summary>
     public static bool IsAnagram(string word1, string word2)
     {
-        // TODO Problem 3 - ADD YOUR CODE HERE
-        return false;
+        var letterCounts = new Dictionary<char, int>();
+
+        int length1 = 0, length2 = 0;
+
+        // Count letters in word1 (ignoring spaces, case-insensitive)
+        foreach (char c in word1)
+        {
+            if (c != ' ')
+            {
+                char lower = char.ToLower(c);
+                if (letterCounts.ContainsKey(lower))
+                    letterCounts[lower]++;
+                else
+                    letterCounts[lower] = 1;
+
+                length1++;
+            }
+        }
+
+        // Subtract counts using word2
+        foreach (char c in word2)
+        {
+            if (c != ' ')
+            {
+                char lower = char.ToLower(c);
+                if (!letterCounts.ContainsKey(lower))
+                    return false;
+
+                letterCounts[lower]--;
+                if (letterCounts[lower] < 0)
+                    return false;
+
+                length2++;
+            }
+        }
+
+        // Quick check: if lengths differ after trimming, it's not an anagram
+        if (length1 != length2)
+            return false;
+
+        return true;
     }
+
 
     /// <summary>
     /// This function will read JSON (Javascript Object Notation) data from the 
@@ -101,6 +175,21 @@ public static class SetsAndMaps
         // on those classes so that the call to Deserialize above works properly.
         // 2. Add code below to create a string out each place a earthquake has happened today and its magitude.
         // 3. Return an array of these string descriptions.
-        return [];
+        var results = new List<string>();
+
+        foreach (var feature in featureCollection.Features)
+        {
+            var place = feature.Properties.Place;
+            var mag = feature.Properties.Mag;
+
+            if (!string.IsNullOrWhiteSpace(place) && mag.HasValue)
+            {
+                var res = $"{place} - Mag {mag.Value})";
+                Console.WriteLine(res.Substring(0, 20));
+                results.Add(res);
+            }
+        }
+
+        return results.ToArray();
     }
 }
