@@ -135,8 +135,7 @@ public static class SetsAndMaps
                 length2++;
             }
         }
-
-        // Quick check: if lengths differ after trimming, it's not an anagram
+        
         if (length1 != length2)
             return false;
 
